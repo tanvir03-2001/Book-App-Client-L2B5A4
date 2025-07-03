@@ -1,4 +1,5 @@
 import { useForm } from "react-hook-form";
+import { useCreateBookMutation } from "../../redux/api/baseApi";
 
 interface BookFormData {
   title: string;
@@ -12,6 +13,10 @@ interface BookFormData {
 }
 
 const AddBook = () => {
+  const [createBook, { data, isLoading, isError, error }] =
+    useCreateBookMutation();
+  console.log({ data, isLoading, isError, error });
+
   const {
     register,
     handleSubmit,
@@ -29,8 +34,10 @@ const AddBook = () => {
     },
   });
 
-  const onSubmit = (data: BookFormData) => {
+  const onSubmit = async (data: BookFormData) => {
     console.log("Submitted Book:", data);
+    const result = await createBook(data).unwrap();
+    console.log("result", result.success, result.message);
     reset(); // Clear form after submission
   };
 

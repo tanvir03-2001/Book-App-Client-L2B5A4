@@ -8,6 +8,7 @@ import {
   MenuItems,
 } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Link } from "react-router";
 
 type INavigationItem = {
   name: string;
@@ -16,9 +17,9 @@ type INavigationItem = {
 };
 
 const navigation: INavigationItem[] = [
-  { name: "All Books", href: "#", current: true },
-  { name: "Add Book", href: "#", current: false },
-  { name: "Borrow Summary", href: "#", current: false },
+  { name: "All Books", href: "/all-books", current: true },
+  { name: "Add Book", href: "/add-book", current: false },
+  { name: "Borrow Summary", href: "/borrow-summary", current: false },
 ];
 
 function classNames(...classes: (string | false | null | undefined)[]): string {
@@ -56,9 +57,9 @@ export default function Navbar() {
             <div className="hidden sm:ml-6 sm:block">
               <div className="flex space-x-4">
                 {navigation.map((item) => (
-                  <a
+                  <Link
                     key={item.name}
-                    href={item.href}
+                    to={item.href}
                     aria-current={item.current ? "page" : undefined}
                     className={classNames(
                       item.current
@@ -68,7 +69,7 @@ export default function Navbar() {
                     )}
                   >
                     {item.name}
-                  </a>
+                  </Link>
                 ))}
               </div>
             </div>

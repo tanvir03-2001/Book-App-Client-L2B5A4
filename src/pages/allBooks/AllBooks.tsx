@@ -1,3 +1,5 @@
+import { Link } from "react-router";
+
 export default function AllBooks() {
   return (
     <div className="container mx-auto px-2 sm:px-6 lg:px-8">
@@ -7,7 +9,7 @@ export default function AllBooks() {
 
           <div className="flex items-center mt-4 gap-x-3">
             <button className="flex items-center justify-center w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg sm:w-auto gap-x-2 hover:bg-blue-6000">
-              <span>Add Book</span>
+              <Link to="/add-book">Add Book</Link>
             </button>
           </div>
         </div>

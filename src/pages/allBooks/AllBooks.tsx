@@ -64,7 +64,7 @@ export default function AllBooks() {
 
                       <th
                         scope="col"
-                        className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 "
+                        className="px-4 py-3.5 text-sm font-normal text-center rtl:text-right text-gray-500 "
                       >
                         Action
                       </th>
@@ -109,7 +109,7 @@ export default function AllBooks() {
                         Lana Steiner
                       </td>
                       <td className="px-4 py-4 text-sm whitespace-nowrap">
-                        <button className="px-1 py-1 text-gray-500 transition-colors duration-200 rounded-lg hover:bg-gray-100">
+                        {/* <button className="px-1 py-1 text-gray-500 transition-colors duration-200 rounded-lg hover:bg-gray-100">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
@@ -124,7 +124,12 @@ export default function AllBooks() {
                               d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
                             />
                           </svg>
-                        </button>
+                        </button> */}
+                        <div className="flex justify-center gap-x-2 text-sm text-gray-500 whitespace-nowrap">
+                          <span className="text-blue-500">Edit</span>
+                          <span className="text-blue-500">View</span>
+                          <span className="text-red-400">Delete</span>
+                        </div>
                       </td>
                     </tr>
                   </tbody>

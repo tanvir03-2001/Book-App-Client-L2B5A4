@@ -1,6 +1,11 @@
 import { Link } from "react-router";
+import { useGetBooksQuery } from "../../redux/api/baseApi";
 
 export default function AllBooks() {
+  const { data, error, isLoading, isSuccess } = useGetBooksQuery(undefined);
+
+  console.log({ data, error, isLoading, isSuccess });
+
   return (
     <div className="container mx-auto px-2 sm:px-6 lg:px-8">
       <section className="container px-4 mx-auto">

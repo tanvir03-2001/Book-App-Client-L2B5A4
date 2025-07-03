@@ -1,52 +1,57 @@
 import { useForm } from "react-hook-form";
 import { useCreateBookMutation } from "../../redux/api/baseApi";
 
-interface BookFormData {
+export interface IBook {
   title: string;
   author: string;
   genre: string;
   isbn: string;
   description: string;
-  copies: string;
+  copies: number;
   available: boolean;
   imageUrl: string;
 }
 
 const AddBook = () => {
-  const [createBook, { data, isLoading, isError, error }] =
+  const [createBook, { isLoading, isError, error, isSuccess }] =
     useCreateBookMutation();
-  console.log({ data, isLoading, isError, error });
+
+  console.log(error);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<BookFormData>({
+  } = useForm<IBook>({
     defaultValues: {
       title: "",
       author: "",
       genre: "",
       isbn: "",
       description: "",
-      copies: "",
+      copies: 1,
+      available: true,
       imageUrl: "",
     },
   });
 
-  const onSubmit = async (data: BookFormData) => {
-    console.log("Submitted Book:", data);
-    const result = await createBook(data).unwrap();
-    console.log("result", result.success, result.message);
-    reset(); // Clear form after submission
+  const onSubmit = async (data: IBook) => {
+    try {
+      const result = await createBook(data).unwrap();
+      console.log("Created:", result);
+      reset();
+    } catch (err) {
+      console.error("Creation error:", err);
+    }
   };
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="max-w-md mx-auto p-4 border rounded shadow space-y-4"
+      className="max-w-md mx-auto p-6 border rounded-xl shadow space-y-4 bg-white"
     >
-      <h2 className="text-xl font-bold">Add Book</h2>
+      <h2 className="text-2xl font-semibold">Add Book</h2>
 
       <input
         type="text"
@@ -64,12 +69,18 @@ const AddBook = () => {
       />
       {errors.author && <p className="text-red-500">{errors.author.message}</p>}
 
-      <input
-        type="text"
-        placeholder="Genre"
+      <select
         {...register("genre", { required: "Genre is required" })}
         className="w-full p-2 border rounded"
-      />
+      >
+        <option value="">Select Genre</option>
+        <option value="FICTION">Fiction</option>
+        <option value="NON_FICTION">Non-fiction</option>
+        <option value="SCIENCE">Science</option>
+        <option value="HISTORY">History</option>
+        <option value="BIOGRAPHY">Biography</option>
+        <option value="FANTASY">Fantasy</option>
+      </select>
       {errors.genre && <p className="text-red-500">{errors.genre.message}</p>}
 
       <input
@@ -91,34 +102,55 @@ const AddBook = () => {
 
       <input
         type="number"
-        placeholder="Number of Copies"
+        placeholder="Copies"
+        min={1}
         {...register("copies", {
-          required: "Number of copies is required",
-          min: { value: 1, message: "Must be at least 1 copy" },
+          required: "Copies required",
+          min: { value: 1, message: "At least 1 copy" },
         })}
         className="w-full p-2 border rounded"
+        onKeyDown={(e) => {
+          if (["e", "-", "+"].includes(e.key)) e.preventDefault();
+        }}
       />
       {errors.copies && <p className="text-red-500">{errors.copies.message}</p>}
 
       <input
         type="text"
         placeholder="Image URL"
-        {...register("imageUrl", { required: "Image URL is required" })}
+        {...register("imageUrl", { required: "Image URL required" })}
         className="w-full p-2 border rounded"
       />
       {errors.imageUrl && (
         <p className="text-red-500">{errors.imageUrl.message}</p>
       )}
 
-      {errors.available && (
-        <p className="text-red-500">{errors.available.message}</p>
+      <div className="flex items-center gap-2">
+        <input type="checkbox" {...register("available")} className="w-4 h-4" />
+        <label className="text-sm">Available</label>
+      </div>
+
+      {/* Submission Feedback */}
+      {isSuccess && (
+        <p className="text-green-600">Book created successfully!</p>
+      )}
+      {isError && (
+        <p className="text-red-600">
+          Failed to create book:{" "}
+          {error?.data?.message || error?.status || "Unknown error"}
+        </p>
       )}
 
       <button
         type="submit"
-        className="w-full bg-blue-600 text-white py-2 rounded"
+        disabled={isLoading}
+        className={`w-full py-2 rounded text-white ${
+          isLoading
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-blue-600 hover:bg-blue-700"
+        }`}
       >
-        Submit
+        {isLoading ? "Submitting..." : "Submit"}
       </button>
     </form>
   );

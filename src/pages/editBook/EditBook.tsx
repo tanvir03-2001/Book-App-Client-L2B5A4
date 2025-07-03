@@ -1,4 +1,7 @@
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useParams } from "react-router";
+import { useEditBookMutation, useGetBookQuery } from "../../redux/api/baseApi";
 
 interface BookFormData {
   title: string;
@@ -12,27 +15,53 @@ interface BookFormData {
 }
 
 const EditBook = () => {
+  const { bookId } = useParams();
+  const { data, isLoading, isError } = useGetBookQuery(bookId);
+  const book = data?.data;
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<BookFormData>({
-    defaultValues: {
-      title: "",
-      author: "",
-      genre: "",
-      isbn: "",
-      description: "",
-      copies: "",
-      imageUrl: "",
-    },
-  });
+  } = useForm<BookFormData>();
 
-  const onSubmit = (data: BookFormData) => {
-    console.log("Submitted Book:", data);
-    reset(); // Clear form after submission
+  // Reset form with fetched book data
+  useEffect(() => {
+    if (book) {
+      reset({
+        title: book.title,
+        author: book.author,
+        genre: book.genre,
+        isbn: book.isbn,
+        description: book.description,
+        copies: String(book.copies),
+        available: book.available,
+        imageUrl: book.imageUrl,
+      });
+    }
+  }, [book, reset]);
+
+  const [
+    editBook,
+    {
+      data: editBookData,
+      isError: editIsError,
+      isLoading: editIsLoading,
+      error: editError,
+    },
+  ] = useEditBookMutation();
+
+  console.log({ editBookData, editIsError, editError, editIsLoading });
+
+  const onSubmit = (formData: BookFormData) => {
+    console.log("Submitted Book:", formData);
+    editBook({ id: bookId, data: formData });
+    // Update logic here
   };
+
+  if (isLoading) return <p>Loading...</p>;
+  if (isError) return <p>Failed to load book data.</p>;
 
   return (
     <form
@@ -103,9 +132,10 @@ const EditBook = () => {
         <p className="text-red-500">{errors.imageUrl.message}</p>
       )}
 
-      {errors.available && (
-        <p className="text-red-500">{errors.available.message}</p>
-      )}
+      <label className="flex items-center space-x-2">
+        <input type="checkbox" {...register("available")} />
+        <span>Available</span>
+      </label>
 
       <button
         type="submit"

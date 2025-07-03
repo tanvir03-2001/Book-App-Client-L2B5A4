@@ -1,16 +1,34 @@
 import { Link } from "react-router";
-import { useGetBooksQuery } from "../../redux/api/baseApi";
+import {
+  useDeleteBookMutation,
+  useGetBooksQuery,
+} from "../../redux/api/baseApi";
+import type { IBook } from "../addBook/AddBook";
 
 export default function AllBooks() {
   const { data, error, isLoading, isSuccess } = useGetBooksQuery(undefined);
+  const [
+    deleteBook,
+    {
+      data: deleteData,
+      isError: deleteIsError,
+      isLoading: deleteIsLoading,
+      error: deleteError,
+    },
+  ] = useDeleteBookMutation();
 
   console.log({ data, error, isLoading, isSuccess });
+  console.log({ deleteData, deleteIsError, deleteIsLoading, deleteError });
 
   const books = data?.data || [];
   console.log(books);
 
   if (isLoading) {
     return <div>Loading...</div>;
+  }
+
+  interface IBookData extends IBook {
+    _id: string;
   }
 
   return (
@@ -86,7 +104,7 @@ export default function AllBooks() {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {books.map((book) => (
+                      {books.map((book: IBookData) => (
                         <tr key={book._id}>
                           <td className="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                             <div className="inline-flex items-center gap-x-3">
@@ -126,9 +144,25 @@ export default function AllBooks() {
                           </td>
                           <td className="px-4 py-4 text-sm whitespace-nowrap">
                             <div className="flex justify-center gap-x-2 text-sm text-gray-500 whitespace-nowrap">
-                              <span className="text-blue-500">Edit</span>
-                              <span className="text-blue-500">View</span>
-                              <span className="text-red-400">Delete</span>
+                              <Link
+                                to={`/edit-book/${book._id}`}
+                                className="text-blue-500"
+                              >
+                                Edit
+                              </Link>
+                              <Link
+                                to={`/book/${book._id}`}
+                                className="text-blue-500"
+                              >
+                                View
+                              </Link>
+                              <button
+                                onClick={() => deleteBook(book._id)}
+                                type="button"
+                                className="text-red-400 cursor-pointer"
+                              >
+                                Delete
+                              </button>
                             </div>
                           </td>
                         </tr>

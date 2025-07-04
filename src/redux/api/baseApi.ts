@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:5000/api" }),
-  tagTypes: ["books"],
+  tagTypes: ["books", "borrow"],
   endpoints: (builder) => ({
     getBooks: builder.query({
       query: () => "/books",
@@ -19,7 +19,7 @@ export const baseApi = createApi({
         method: "POST",
         body: bookData,
       }),
-      invalidatesTags: ["books"],
+      invalidatesTags: ["books", "borrow"],
     }),
     editBook: builder.mutation({
       query: (book) => ({
@@ -27,14 +27,14 @@ export const baseApi = createApi({
         method: "PUT",
         body: book.data,
       }),
-      invalidatesTags: ["books"],
+      invalidatesTags: ["books", "borrow"],
     }),
     deleteBook: builder.mutation({
       query: (bookId) => ({
         url: `book/${bookId}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["books"],
+      invalidatesTags: ["books", "borrow"],
     }),
     borrowBook: builder.mutation({
       query: (data) => ({
@@ -42,7 +42,11 @@ export const baseApi = createApi({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["books"],
+      invalidatesTags: ["books", "borrow"],
+    }),
+    getBorrowSummary: builder.query({
+      query: () => "/borrow",
+      providesTags: ["borrow"],
     }),
   }),
 });
@@ -54,4 +58,5 @@ export const {
   useEditBookMutation,
   useDeleteBookMutation,
   useBorrowBookMutation,
+  useGetBorrowSummaryQuery,
 } = baseApi;

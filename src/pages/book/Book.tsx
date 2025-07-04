@@ -1,4 +1,5 @@
 import { useParams } from "react-router";
+import BorrowQuantity from "../../component/ui/BorrowQuantity";
 import { useGetBookQuery } from "../../redux/api/baseApi";
 
 export default function Book() {
@@ -75,9 +76,10 @@ export default function Book() {
           <span>Updated: {new Date(book.updatedAt).toLocaleString()}</span>
         </div>
 
-        <button className="mt-6 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+        {/* <button className="mt-6 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
           Reserve Book
-        </button>
+        </button> */}
+        <BorrowQuantity availableCopies={book.copies} id={bookId} />
       </div>
     </div>
   );

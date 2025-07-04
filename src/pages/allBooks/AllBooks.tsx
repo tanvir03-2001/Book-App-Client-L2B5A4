@@ -145,6 +145,12 @@ export default function AllBooks() {
                           <td className="px-4 py-4 text-sm whitespace-nowrap">
                             <div className="flex justify-center gap-x-2 text-sm text-gray-500 whitespace-nowrap">
                               <Link
+                                to={`/book/${book._id}`}
+                                className="text-blue-500"
+                              >
+                                Borrow
+                              </Link>
+                              <Link
                                 to={`/edit-book/${book._id}`}
                                 className="text-blue-500"
                               >

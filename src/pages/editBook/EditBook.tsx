@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router";
+import { toast } from "sonner";
 import { useEditBookMutation, useGetBookQuery } from "../../redux/api/baseApi";
 
 interface BookFormData {
@@ -54,10 +55,19 @@ const EditBook = () => {
 
   console.log({ editBookData, editIsError, editError, editIsLoading });
 
-  const onSubmit = (formData: BookFormData) => {
-    console.log("Submitted Book:", formData);
-    editBook({ id: bookId, data: formData });
-    // Update logic here
+  const onSubmit = async (formData: BookFormData) => {
+    try {
+      console.log("Submitted Book:", formData);
+      const result = await editBook({ id: bookId, data: formData }).unwrap();
+      console.log("result", result);
+      if (result.success) {
+        toast.success(result.message);
+      }
+      // Update logic here
+    } catch (error) {
+      toast.error("Something went wrong");
+      console.log(error);
+    }
   };
 
   if (isLoading) return <p>Loading...</p>;
@@ -131,11 +141,6 @@ const EditBook = () => {
       {errors.imageUrl && (
         <p className="text-red-500">{errors.imageUrl.message}</p>
       )}
-
-      <label className="flex items-center space-x-2">
-        <input type="checkbox" {...register("available")} />
-        <span>Available</span>
-      </label>
 
       <button
         type="submit"

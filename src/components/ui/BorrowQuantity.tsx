@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from "sonner";
 import { useBorrowBookMutation } from "../../redux/api/baseApi";
 
 interface BorrowQuantityProps {
@@ -16,10 +17,11 @@ const BorrowQuantity: React.FC<BorrowQuantityProps> = ({
 
   const today = new Date().toISOString().split("T")[0];
 
-  const [borrowBook, { data, isLoading, isError, error: borrowBookError }] =
-    useBorrowBookMutation();
+  const [borrowBook] = useBorrowBookMutation();
 
-  console.log({ data, isLoading, isError, error: borrowBookError });
+  // if (isSuccess) {
+
+  // }
 
   const handleDecrease = () => {
     if (quantity > 0) {
@@ -50,30 +52,33 @@ const BorrowQuantity: React.FC<BorrowQuantityProps> = ({
     }
   };
 
-  const handleSubmit = () => {
-    if (quantity < 1) {
-      setError("Please enter a quantity greater than 0");
-    } else if (quantity > availableCopies) {
-      setError(`Cannot exceed available copies (${availableCopies})`);
-    } else if (!dueDate) {
-      setError("Please select a due date");
-    } else {
-      setError("");
-      // Example: send data to backend or handle it here
-      // console.log({
-      //   book: id,
-      //   quantity,
-      //   dueDate,
-      // });
-      borrowBook({
-        book: id,
-        quantity,
-        dueDate,
-      });
+  const handleSubmit = async () => {
+    try {
+      if (quantity < 1) {
+        setError("Please enter a quantity greater than 0");
+      } else if (quantity > availableCopies) {
+        setError(`Cannot exceed available copies (${availableCopies})`);
+      } else if (!dueDate) {
+        setError("Please select a due date");
+      } else {
+        setError("");
+        const result = await borrowBook({
+          book: id,
+          quantity,
+          dueDate,
+        }).unwrap();
 
-      // Reset
-      setQuantity(0);
-      setDueDate("");
+        console.log(result);
+        if (result?.success) {
+          toast.success(result.message);
+        }
+        // Reset
+        setQuantity(0);
+        setDueDate("");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
     }
   };
 

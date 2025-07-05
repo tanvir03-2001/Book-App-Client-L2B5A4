@@ -46,11 +46,12 @@ const AddBook = () => {
       const result = await createBook(data).unwrap();
       console.log("Created:", result);
       if (result?.success) {
-        toast(result.message);
+        toast.success(result.message);
       }
       reset();
     } catch (err) {
       console.error("Creation error:", err);
+      toast.error("Something went wrong");
     }
   };
 

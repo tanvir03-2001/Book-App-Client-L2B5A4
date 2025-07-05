@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import { toast } from "sonner";
 import {
   useDeleteBookMutation,
   useGetBooksQuery,
@@ -30,6 +31,18 @@ export default function AllBooks() {
   interface IBookData extends IBook {
     _id: string;
   }
+
+  const handleDelete = async (id: string | number) => {
+    try {
+      const result = await deleteBook(id).unwrap();
+      if (result.success) {
+        toast.success(result.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
+    }
+  };
 
   return (
     <div className="container mx-auto px-2 sm:px-6 lg:px-8">
@@ -163,7 +176,7 @@ export default function AllBooks() {
                                 View
                               </Link>
                               <button
-                                onClick={() => deleteBook(book._id)}
+                                onClick={() => handleDelete(book._id)}
                                 type="button"
                                 className="text-red-400 cursor-pointer"
                               >

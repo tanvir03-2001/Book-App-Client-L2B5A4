@@ -1,4 +1,5 @@
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { useCreateBookMutation } from "../../redux/api/baseApi";
 
 export interface IBook {
@@ -36,10 +37,17 @@ const AddBook = () => {
     },
   });
 
+  const handleTost = () => {
+    toast.success("tost check");
+  };
+
   const onSubmit = async (data: IBook) => {
     try {
       const result = await createBook(data).unwrap();
       console.log("Created:", result);
+      if (result?.success) {
+        toast(result.message);
+      }
       reset();
     } catch (err) {
       console.error("Creation error:", err);
@@ -51,7 +59,9 @@ const AddBook = () => {
       onSubmit={handleSubmit(onSubmit)}
       className="max-w-md mx-auto p-6 border rounded-xl shadow space-y-4 bg-white"
     >
-      <h2 className="text-2xl font-semibold">Add Book</h2>
+      <h2 onClick={handleTost} className="text-2xl font-semibold">
+        Add Book
+      </h2>
 
       <input
         type="text"
@@ -134,12 +144,7 @@ const AddBook = () => {
       {isSuccess && (
         <p className="text-green-600">Book created successfully!</p>
       )}
-      {isError && (
-        <p className="text-red-600">
-          Failed to create book:{" "}
-          {error?.data?.message || error?.status || "Unknown error"}
-        </p>
-      )}
+      {isError && <p className="text-red-600">Failed to create book:</p>}
 
       <button
         type="submit"

@@ -1,5 +1,5 @@
 import { useParams } from "react-router";
-import BorrowQuantity from "../../component/ui/BorrowQuantity";
+import BorrowQuantity from "../../components/ui/BorrowQuantity";
 import { useGetBookQuery } from "../../redux/api/baseApi";
 
 export default function Book() {
@@ -20,9 +20,7 @@ export default function Book() {
 
   if (isError) {
     return (
-      <div className="text-center mt-20 text-red-600">
-        Failed to load book. {error?.data?.message || "Something went wrong."}
-      </div>
+      <div className="text-center mt-20 text-red-600">Failed to load book.</div>
     );
   }
 
